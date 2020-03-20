@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhetian.www.dao.IOrderDao">
+
+
+    <insert id="saveOrder" parameterType="com.zhetian.www.model.Order">
+      INSERT INTO `Order` (id,user_id,product_id,Buy_Num,orderNum,state)
+      VALUES (NULL,#{userId},#{productId},#{buyNum},#{orderNum},#{state})
+    </insert>
+
+
+    <select id="query" parameterType="com.zhetian.www.common.QueryPersonalCenterObj"
+            resultType="com.zhetian.www.model.PersonalCenter">
+        SELECT o.id, p.productName, p.productPrice productPrice,o.state, p.type, o.Buy_Num buyNum FROM `Order` o
+        LEFT JOIN product p ON (o.product_id = p.id) WHERE o.user_id = #{userId}
+        <where>
+            <if test="type!=null and type!=''">
+                AND `type`=#{type}
+            </if>
+
+            <if test="productName!=null and productName!=''">
+                AND productName=#{productName}
+            </if>
+
+            <if test="minBuyNum!=null and minBuyNum!=''">
+                AND  Buy_Num>=#{minBuyNum}
+            </if>
+
+            <if test="maxBuyNum!=null and maxBuyNum!=''">
+                <![CDATA[   AND Buy_Num<=#{maxBuyNum}  ]]>
+            </if>
+        </where>
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="count" parameterType="com.zhetian.www.common.QueryProductObj"  resultType="int">
+
+        SELECT COUNT(1) FROM `Order` o LEFT JOIN product p ON (o.product_id = p.id) WHERE o.user_id =#{userId}
+        <where>
+            <if test="type!=null and type!=''">
+                AND `type`=#{type}
+            </if>
+
+            <if test="productName!=null and productName!=''">
+                AND productName=#{productName}
+            </if>
+
+            <if test="minBuyNum!=null and minBuyNum!=''">
+                AND  Buy_Num>=#{minBuyNum}
+            </if>
+
+            <if test="maxBuyNum!=null and maxBuyNum!=''">
+                <![CDATA[   AND Buy_Num<=#{maxBuyNum}  ]]>
+            </if>
+        </where>
+    </select>
+
+</mapper>
